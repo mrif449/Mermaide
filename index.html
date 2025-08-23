@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Mermaid Live Previewer — Dark Blue</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <!-- Mermaid -->
+        <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+        <!-- Inter font (optional, modern feel) -->
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --bg: #0b1220;
+                --panel: #0f172a;
+                --muted: #94a3b8;
+                --text: #e5e7eb;
+                --accent: #2563eb;
+                --accent-2: #1d4ed8;
+                --success: #22c55e;
+                --danger: #ef4444;
+                --ring: 0 0 0 2px var(--accent);
+                --radius: 22px;
+                --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+                --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.25);
+            }
+            * {
+                box-sizing: border-box;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+            body {
+                margin: 0;
+                background: radial-gradient(
+                        1200px 600px at 15% -10%,
+                        rgba(37, 99, 235, 0.15),
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        1000px 800px at 110% 20%,
+                        rgba(2, 132, 199, 0.12),
+                        transparent 60%
+                    ),
+                    var(--bg);
+                color: var(--text);
+                font-family: Inter, ui-sans-serif, system-ui, -apple-system,
+                    Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+                    "Segoe UI Emoji";
+                line-height: 1.55;
+            }
+
+            header {
+                position: sticky;
+                top: 0;
+                z-index: 20;
+                backdrop-filter: saturate(120%) blur(10px);
+                background: linear-gradient(
+                    to bottom,
+                    rgba(11, 18, 32, 0.9),
+                    rgba(11, 18, 32, 0.6)
+                );
+                border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+            }
+            .wrap {
+                max-width: 1200px;
+                margin: 0 auto;
+                padding: 18px 18px;
+            }
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .logo {
+                width: 36px;
+                height: 36px;
+                border-radius: 12px;
+                background: conic-gradient(
+                    from 140deg,
+                    var(--accent),
+                    #38bdf8 50%,
+                    #0ea5e9 75%,
+                    var(--accent)
+                );
+                box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.6),
+                    0 10px 20px rgba(37, 99, 235, 0.25);
+            }
+            h1 {
+                font-size: 20px;
+                margin: 0;
+                letter-spacing: 0.2px;
+            }
+            .sub {
+                color: var(--muted);
+                font-size: 12px;
+                margin-top: -2px;
+            }
+
+            .toolbar {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 10px;
+                align-items: center;
+                margin-top: 12px;
+            }
+            .toolbar .group {
+                background: rgba(15, 23, 42, 0.7);
+                border: 1px solid rgba(148, 163, 184, 0.15);
+                border-radius: 14px;
+                padding: 8px;
+                display: flex;
+                gap: 8px;
+                align-items: center;
+                box-shadow: var(--shadow-soft);
+            }
+            label {
+                font-size: 12px;
+                color: var(--muted);
+            }
+            select,
+            button,
+            input[type="number"] {
+                appearance: none;
+                color: var(--text);
+                background: #0b1220;
+                border: 1px solid rgba(148, 163, 184, 0.18);
+                border-radius: 12px;
+                padding: 10px 12px;
+                font: inherit;
+                outline: none;
+            }
+            select:focus,
+            input[type="number"]:focus {
+                box-shadow: var(--ring);
+                border-color: transparent;
+            }
+            button {
+                background: linear-gradient(
+                    180deg,
+                    var(--accent),
+                    var(--accent-2)
+                );
+                border: none;
+                cursor: pointer;
+                font-weight: 700;
+                letter-spacing: 0.2px;
+                transition: 0.2s transform, 0.2s filter;
+                box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+            }
+            button:hover {
+                transform: translateY(-1px);
+            }
+            button:active {
+                transform: translateY(0);
+            }
+            .ghost {
+                background: transparent;
+                border: 1px solid rgba(148, 163, 184, 0.18);
+                box-shadow: none;
+                font-weight: 600;
+            }
+            .success {
+                background: linear-gradient(180deg, #22c55e, #16a34a);
+                box-shadow: 0 10px 20px rgba(34, 197, 94, 0.35);
+            }
+            .danger {
+                background: linear-gradient(180deg, #ef4444, #dc2626);
+                box-shadow: 0 10px 20px rgba(239, 68, 68, 0.28);
+            }
+
+            main {
+                max-width: 1200px;
+                margin: 20px auto;
+                padding: 0 18px 40px;
+            }
+            .grid {
+                display: grid;
+                gap: 16px;
+                grid-template-columns: 1fr;
+            }
+            @media (min-width: 960px) {
+                .grid {
+                    grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+                }
+            }
+
+            .panel {
+                background: linear-gradient(
+                    180deg,
+                    rgba(15, 23, 42, 0.95),
+                    rgba(15, 23, 42, 0.85)
+                );
+                border: 1px solid rgba(148, 163, 184, 0.15);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+            .panel header {
+                position: static;
+                background: transparent;
+                backdrop-filter: none;
+                border: none;
+                padding: 14px 16px;
+                border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+            }
+            .panel h2 {
+                font-size: 14px;
+                margin: 0;
+                color: #cbd5e1;
+                letter-spacing: 0.3px;
+            }
+            .panel .body {
+                padding: 14px;
+            }
+            textarea {
+                width: 100%;
+                min-height: 420px;
+                resize: vertical;
+                background: #0b1220;
+                color: var(--text);
+                border: 1px solid rgba(148, 163, 184, 0.18);
+                border-radius: 14px;
+                padding: 14px 14px 40px 14px;
+                line-height: 1.45;
+                font: 13px/1.5 ui-monospace, SFMono-Regular, Menlo, Monaco,
+                    Consolas, "Liberation Mono", "Courier New", monospace;
+                outline: none;
+                box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.08);
+            }
+            textarea:focus {
+                box-shadow: var(--ring);
+            }
+            .helper {
+                display: flex;
+                justify-content: space-between;
+                gap: 10px;
+                align-items: center;
+                margin-top: 10px;
+                color: var(--muted);
+                font-size: 12px;
+            }
+            .chips {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+            }
+            .chip {
+                padding: 6px 10px;
+                border-radius: 999px;
+                border: 1px dashed rgba(148, 163, 184, 0.25);
+                color: #93c5fd;
+                cursor: pointer;
+                user-select: none;
+            }
+            .chip:hover {
+                border-style: solid;
+            }
+
+            .preview-wrap {
+                position: relative;
+                overflow: auto;
+                background: #0b1220;
+                border: 1px solid rgba(148, 163, 184, 0.18);
+                border-radius: 14px;
+                padding: 10px;
+                min-height: 420px;
+            }
+            .preview-wrap svg {
+                display: block;
+                margin: auto;
+                height: auto;
+                max-width: 100%;
+            }
+            .status {
+                margin-top: 10px;
+                font-size: 12px;
+                color: var(--muted);
+            }
+            .status .ok {
+                color: var(--success);
+            }
+            .status .err {
+                color: #fca5a5;
+            }
+
+            .footer-note {
+                text-align: center;
+                color: var(--muted);
+                font-size: 12px;
+                margin-top: 28px;
+            }
+
+            .kbd {
+                border: 1px solid rgba(148, 163, 184, 0.3);
+                padding: 2px 6px;
+                border-radius: 6px;
+                font-size: 11px;
+                color: #cbd5e1;
+            }
+        </style>
+    </head>
+    <body>
+        <header>
+            <div class="wrap">
+                <div class="brand">
+                    <div class="logo" aria-hidden="true"></div>
+                    <div>
+                        <h1>Mermaid Live Previewer</h1>
+                        <div class="sub">
+                            Dark mode • Blue accent • Export high-quality PNG
+                        </div>
+                    </div>
+                </div>
+
+                <div class="toolbar" role="toolbar" aria-label="Chart controls">
+                    <div class="group">
+                        <label for="template">Template</label>
+                        <select id="template" title="Insert starter template">
+                            <option value="flowchart">Flowchart</option>
+                            <option value="sequence">Sequence diagram</option>
+                            <option value="class">Class diagram</option>
+                            <option value="state">State diagram</option>
+                            <option value="er">ER diagram</option>
+                            <option value="gantt">Gantt</option>
+                            <option value="journey">User Journey</option>
+                        </select>
+                        <button
+                            class="ghost"
+                            id="insertBtn"
+                            title="Insert template at cursor"
+                        >
+                            Insert
+                        </button>
+                    </div>
+
+                    <div class="group">
+                        <label for="scale">PNG Scale</label>
+                        <select id="scale">
+                            <option value="1">1×</option>
+                            <option value="2" selected>2×</option>
+                            <option value="3">3×</option>
+                            <option value="4">4×</option>
+                            <option value="5">5×</option>
+                            <option value="6">6×</option>
+                        </select>
+                        <button id="downloadPng" class="success">
+                            Download PNG
+                        </button>
+                        <button id="downloadSvg" class="ghost">
+                            Download SVG
+                        </button>
+                        <button id="resetBtn" class="danger">Reset</button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <div class="grid">
+                <section class="panel">
+                    <header><h2>Editor</h2></header>
+                    <div class="body">
+                        <textarea id="editor" spellcheck="false"></textarea>
+                        <div class="helper">
+                            <div>
+                                Live updates as you type. Press
+                                <span class="kbd">Ctrl</span> +
+                                <span class="kbd">Enter</span> to force render.
+                            </div>
+                            <div class="chips">
+                                <div
+                                    class="chip"
+                                    data-snippet="%%{init: { 'theme': 'dark' }}%%"
+                                >
+                                    Add init
+                                </div>
+                                <div
+                                    class="chip"
+                                    data-snippet="%%{config: { 'look': 'handDrawn' }}%%"
+                                >
+                                    Hand-drawn
+                                </div>
+                                <div
+                                    class="chip"
+                                    data-snippet="%%{config: { 'flowchart': { 'curve': 'basis' } }}%%"
+                                >
+                                    Smooth edges
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="panel">
+                    <header><h2>Preview</h2></header>
+                    <div class="body">
+                        <div
+                            id="preview"
+                            class="preview-wrap"
+                            aria-live="polite"
+                            aria-busy="false"
+                        ></div>
+                        <div class="status" id="status">Ready.</div>
+                    </div>
+                </section>
+            </div>
+
+            <p class="footer-note">
+                Tip: For very large diagrams, keep shapes/labels concise. If you
+                ever hit a “maximum text size” error, split the diagram into
+                sub-graphs or remove unused whitespace/comments.
+            </p>
+        </main>
+
+        <script>
+            // ---------- Mermaid setup ----------
+            mermaid.initialize({
+                startOnLoad: false,
+                securityLevel: "loose", // allow links/downloads inside SVG if needed
+                theme: "dark",
+                themeVariables: {
+                    background: "#0b1220",
+                    primaryColor: "#0b1220",
+                    primaryTextColor: "#e5e7eb",
+                    lineColor: "#60a5fa",
+                    edgeLabelBackground: "#0b1220",
+                    clusterBkg: "#0f172a",
+                    clusterBorder: "#2563eb",
+                    noteBkgColor: "#0f172a",
+                    noteTextColor: "#cbd5e1",
+                },
+                flowchart: {
+                    useMaxWidth: true,
+                    htmlLabels: true,
+                    curve: "linear",
+                },
+                sequence: { mirrorActors: false, showSequenceNumbers: false },
+                er: { useMaxWidth: true },
+                fontFamily: "Inter, ui-sans-serif, system-ui",
+            });
+
+            // ---------- Elements ----------
+            const editor = document.getElementById("editor");
+            const preview = document.getElementById("preview");
+            const statusEl = document.getElementById("status");
+            const templateSel = document.getElementById("template");
+            const insertBtn = document.getElementById("insertBtn");
+            const resetBtn = document.getElementById("resetBtn");
+            const downloadBtn = document.getElementById("downloadPng");
+            const downloadSvgBtn = document.getElementById("downloadSvg");
+            const scaleSel = document.getElementById("scale");
+            const chips = document.querySelectorAll(".chip");
+
+            let lastSVG = "";
+            let lastTitle = "mermaid-chart";
+
+            // ---------- Templates ----------
+            const TEMPLATES = {
+                flowchart: `flowchart TD
+  A[Start] --> B{Is it big?}
+  B -- Yes --> C[Split into subgraphs]
+  B -- No --> D[Render directly]
+  C --> E[Preview]
+  D --> E[Preview]
+  E --> F{Export?}
+  F -- PNG --> G[Download high-res PNG]
+  F -- SVG --> H[Download SVG]`,
+
+                sequence: `sequenceDiagram
+  autonumber
+  participant U as User
+  participant P as Previewer
+  U->>P: Type Mermaid code
+  activate P
+  P-->>U: Live render
+  deactivate P`,
+
+                class: `classDiagram
+  class Previewer {
+    +render(code)
+    +downloadPNG(scale)
+    +downloadSVG()
+  }
+  class Editor {
+    +value : string
+    +onInput()
+  }
+  Editor --> Previewer`,
+
+                state: `stateDiagram-v2
+  [*] --> Idle
+  Idle --> Editing: input
+  Editing --> Rendering: debounce
+  Rendering --> Preview: success
+  Rendering --> Error: parse fail
+  Error --> Editing: fix`,
+
+                er: `erDiagram
+  USERS ||--o{ DIAGRAMS : creates
+  DIAGRAMS {
+    string id PK
+    string title
+    text content
+  }`,
+
+                gantt: `gantt
+  title Build Mermaid Previewer
+  dateFormat  YYYY-MM-DD
+  section Scoping
+  Design UI           :done,    des1, 2025-08-01, 3d
+  section Dev
+  Editor + Preview    :active,  dev1, 2025-08-04, 5d
+  Export (PNG/SVG)    :         dev2, after dev1, 3d`,
+
+                journey: `journey
+  title Authoring experience
+  section Compose
+    Write code: 5: User
+    Auto preview: 4: App
+  section Export
+    Download PNG: 5: App
+    Download SVG: 5: App`,
+            };
+
+            // ---------- Helpers ----------
+            function debounce(fn, wait = 300) {
+                let t;
+                return (...args) => {
+                    clearTimeout(t);
+                    t = setTimeout(() => fn(...args), wait);
+                };
+            }
+
+            function setStatus(msg, type = "") {
+                statusEl.innerHTML = msg;
+                statusEl.className = "status" + (type ? " " + type : "");
+            }
+
+            function sanitizeTitle(str) {
+                return (str || "mermaid-chart")
+                    .toLowerCase()
+                    .replace(/[^a-z0-9\-]+/g, "-")
+                    .replace(/^-+|-+$/g, "");
+            }
+
+            // ---------- Rendering ----------
+            async function renderMermaid(code) {
+                if (!code || !code.trim()) {
+                    preview.innerHTML =
+                        '<div style="opacity:.6; text-align:center; padding:40px">Start typing Mermaid code…</div>';
+                    lastSVG = "";
+                    setStatus("Ready.");
+                    return;
+                }
+                setStatus("Rendering…");
+                preview.setAttribute("aria-busy", "true");
+
+                try {
+                    // Use a unique id each render to avoid cache collisions
+                    const { svg } = await mermaid.render(
+                        "mmd-" + Math.random().toString(36).slice(2),
+                        code
+                    );
+                    lastSVG = svg;
+                    // Wrap in a responsive container
+                    preview.innerHTML = svg;
+                    // Guess a filename title from first non-directive line
+                    const firstLine =
+                        code
+                            .split("\n")
+                            .find((l) => !l.trim().startsWith("%%")) ||
+                        "mermaid-chart";
+                    lastTitle = sanitizeTitle(firstLine.slice(0, 60));
+                    setStatus('<span class="ok">Rendered.</span>');
+                } catch (err) {
+                    console.error(err);
+                    let msg = String(err && err.message ? err.message : err);
+                    if (/text size/i.test(msg)) {
+                        msg +=
+                            " — Consider splitting the diagram or shortening labels.";
+                    }
+                    preview.innerHTML =
+                        '<div style="color:#fca5a5; white-space:pre-wrap; padding:10px">Error:\n' +
+                        msg +
+                        "</div>";
+                    setStatus('<span class="err">Failed to render.</span>');
+                    lastSVG = "";
+                } finally {
+                    preview.removeAttribute("aria-busy");
+                }
+            }
+
+            const debouncedRender = debounce(
+                () => renderMermaid(editor.value),
+                400
+            );
+
+            // ---------- Export ----------
+            function getSvgDimensions(svgText) {
+                // Extract viewBox if present, else width/height attributes
+                const m = svgText.match(/viewBox="([\d.\-\s]+)"/i);
+                if (m) {
+                    const [, , w, h] = m[1].split(/\s+/).map(Number);
+                    return { width: w, height: h };
+                }
+                const mw = svgText.match(/width="([\d.]+)"/i);
+                const mh = svgText.match(/height="([\d.]+)"/i);
+                return {
+                    width: mw ? parseFloat(mw[1]) : 1200,
+                    height: mh ? parseFloat(mh[1]) : 800,
+                };
+            }
+
+            // ✅ FIX: use data: URL + crossOrigin=anonymous to avoid tainted canvas
+            function svgToPng(
+                svgText,
+                scale = 2,
+                filename = "chart.png",
+                bg = "#0b1220"
+            ) {
+                const { width, height } = getSvgDimensions(svgText);
+                const svgDataUrl =
+                    "data:image/svg+xml;charset=utf-8," +
+                    encodeURIComponent(svgText);
+                const img = new Image();
+                img.crossOrigin = "anonymous";
+                img.decoding = "sync";
+                img.onload = () => {
+                    const canvas = document.createElement("canvas");
+                    canvas.width = Math.max(1, Math.round(width * scale));
+                    canvas.height = Math.max(1, Math.round(height * scale));
+                    const ctx = canvas.getContext("2d");
+                    // Solid dark background for non-transparent PNGs
+                    ctx.fillStyle = bg;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = "high";
+                    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                    canvas.toBlob((blob) => {
+                        const a = document.createElement("a");
+                        a.href = URL.createObjectURL(blob);
+                        a.download = filename;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                        // URL.revokeObjectURL(a.href); // safe to let GC handle shortly
+                    }, "image/png");
+                };
+                img.onerror = () => {
+                    alert(
+                        "Could not rasterize SVG. Try a lower scale or simpler diagram."
+                    );
+                };
+                img.src = svgDataUrl;
+            }
+
+            function downloadSVG(svgText, filename = "chart.svg") {
+                const blob = new Blob([svgText], {
+                    type: "image/svg+xml;charset=utf-8",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                URL.revokeObjectURL(url);
+            }
+
+            // ---------- UI wiring ----------
+            editor.addEventListener("input", debouncedRender);
+            editor.addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+                    e.preventDefault();
+                    renderMermaid(editor.value);
+                }
+            });
+
+            insertBtn.addEventListener("click", () => {
+                const key = templateSel.value;
+                const snippet = TEMPLATES[key] || "";
+                insertAtCursor(editor, "\n" + snippet.trim() + "\n");
+                renderMermaid(editor.value);
+            });
+
+            chips.forEach((ch) =>
+                ch.addEventListener("click", () => {
+                    insertAtCursor(editor, ch.dataset.snippet + "\n");
+                    renderMermaid(editor.value);
+                })
+            );
+
+            resetBtn.addEventListener("click", () => {
+                editor.value = TEMPLATES.flowchart;
+                renderMermaid(editor.value);
+                editor.focus();
+            });
+
+            downloadBtn.addEventListener("click", () => {
+                if (!lastSVG) {
+                    alert("Nothing to export yet. Type some Mermaid code.");
+                    return;
+                }
+                const scale = parseInt(scaleSel.value, 10) || 2;
+                svgToPng(
+                    lastSVG,
+                    scale,
+                    `${lastTitle || "mermaid-chart"}@${scale}x.png`,
+                    "#0b1220"
+                );
+            });
+
+            downloadSvgBtn.addEventListener("click", () => {
+                if (!lastSVG) {
+                    alert("Nothing to export yet. Type some Mermaid code.");
+                    return;
+                }
+                downloadSVG(lastSVG, `${lastTitle || "mermaid-chart"}.svg`);
+            });
+
+            function insertAtCursor(textarea, text) {
+                const start = textarea.selectionStart;
+                const end = textarea.selectionEnd;
+                const before = textarea.value.substring(0, start);
+                const after = textarea.value.substring(end);
+                textarea.value = before + text + after;
+                const pos = start + text.length;
+                textarea.setSelectionRange(pos, pos);
+                textarea.focus();
+            }
+
+            // ---------- Boot ----------
+            editor.value = TEMPLATES.flowchart;
+            renderMermaid(editor.value);
+        </script>
+    </body>
+</html>
