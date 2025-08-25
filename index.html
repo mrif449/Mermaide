@@ -2,7 +2,7 @@
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
-        <title>Mermaid Live Previewer — Dark Blue</title>
+        <title>Mermaid Live Previewer — Light/Dark Mode</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <!-- Mermaid -->
         <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
@@ -11,9 +11,9 @@
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap"
             rel="stylesheet"
         />
-        <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon">
+        <link rel="shortcut icon" href="./favicon.ico" type="image/x-icon" />
         <style>
-            @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+            @import url("https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap");
             :root {
                 --bg: #0b1220;
                 --panel: #0f172a;
@@ -27,10 +27,57 @@
                 --radius: 22px;
                 --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
                 --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.25);
+                --preview-bg: #0b1220;
+                --editor-bg: #0b1220;
+                --header-bg: linear-gradient(
+                    to bottom,
+                    rgba(11, 18, 32, 0.9),
+                    rgba(11, 18, 32, 0.6)
+                );
+                --header-border: rgba(148, 163, 184, 0.15);
+                --panel-border: rgba(148, 163, 184, 0.15);
+                --input-bg: #0b1220;
+                --input-border: rgba(148, 163, 184, 0.18);
+                --chip-border: rgba(148, 163, 184, 0.25);
+                --chip-color: #93c5fd;
+                --kbd-border: rgba(148, 163, 184, 0.3);
+                --kbd-color: #cbd5e1;
             }
+
+            [data-theme="light"] {
+                --bg: #f8fafc;
+                --panel: #ffffff;
+                --muted: #64748b;
+                --text: #1e293b;
+                --accent: #3b82f6;
+                --accent-2: #2563eb;
+                --success: #16a34a;
+                --danger: #dc2626;
+                --ring: 0 0 0 2px var(--accent);
+                --shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+                --shadow-soft: 0 6px 18px rgba(0, 0, 0, 0.05);
+                --preview-bg: #ffffff;
+                --editor-bg: #f1f5f9;
+                --header-bg: linear-gradient(
+                    to bottom,
+                    rgba(248, 250, 252, 0.9),
+                    rgba(248, 250, 252, 0.6)
+                );
+                --header-border: rgba(148, 163, 184, 0.2);
+                --panel-border: rgba(148, 163, 184, 0.2);
+                --input-bg: #f1f5f9;
+                --input-border: rgba(148, 163, 184, 0.25);
+                --chip-border: rgba(148, 163, 184, 0.35);
+                --chip-color: #3b82f6;
+                --kbd-border: rgba(148, 163, 184, 0.4);
+                --kbd-color: #475569;
+            }
+
             * {
                 box-sizing: border-box;
                 font-family: "Open Sans", sans-serif;
+                transition: background-color 0.3s ease, color 0.3s ease,
+                    border-color 0.3s ease;
             }
             html,
             body {
@@ -56,17 +103,27 @@
                 line-height: 1.55;
             }
 
+            [data-theme="light"] body {
+                background: radial-gradient(
+                        1200px 600px at 15% -10%,
+                        rgba(59, 130, 246, 0.08),
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        1000px 800px at 110% 20%,
+                        rgba(2, 132, 199, 0.06),
+                        transparent 60%
+                    ),
+                    var(--bg);
+            }
+
             header {
                 position: sticky;
                 top: 0;
                 z-index: 20;
                 backdrop-filter: saturate(120%) blur(10px);
-                background: linear-gradient(
-                    to bottom,
-                    rgba(11, 18, 32, 0.9),
-                    rgba(11, 18, 32, 0.6)
-                );
-                border-bottom: 1px solid rgba(148, 163, 184, 0.15);
+                background: var(--header-bg);
+                border-bottom: 1px solid var(--header-border);
             }
             .wrap {
                 max-width: 1200px;
@@ -112,7 +169,7 @@
             }
             .toolbar .group {
                 background: rgba(15, 23, 42, 0.7);
-                border: 1px solid rgba(148, 163, 184, 0.15);
+                border: 1px solid var(--panel-border);
                 border-radius: 14px;
                 padding: 8px;
                 display: flex;
@@ -120,6 +177,11 @@
                 align-items: center;
                 box-shadow: var(--shadow-soft);
             }
+
+            [data-theme="light"] .toolbar .group {
+                background: rgba(255, 255, 255, 0.7);
+            }
+
             label {
                 font-size: 12px;
                 color: var(--muted);
@@ -129,8 +191,8 @@
             input[type="number"] {
                 appearance: none;
                 color: var(--text);
-                background: #0b1220;
-                border: 1px solid rgba(148, 163, 184, 0.18);
+                background: var(--input-bg);
+                border: 1px solid var(--input-border);
                 border-radius: 12px;
                 padding: 10px 12px;
                 font: inherit;
@@ -153,6 +215,7 @@
                 letter-spacing: 0.2px;
                 transition: 0.2s transform, 0.2s filter;
                 box-shadow: 0 10px 20px rgba(37, 99, 235, 0.35);
+                color: white;
             }
             button:hover {
                 transform: translateY(-1px);
@@ -162,9 +225,10 @@
             }
             .ghost {
                 background: transparent;
-                border: 1px solid rgba(148, 163, 184, 0.18);
+                border: 1px solid var(--input-border);
                 box-shadow: none;
                 font-weight: 600;
+                color: var(--text);
             }
             .success {
                 background: linear-gradient(180deg, #22c55e, #16a34a);
@@ -197,18 +261,27 @@
                     rgba(15, 23, 42, 0.95),
                     rgba(15, 23, 42, 0.85)
                 );
-                border: 1px solid rgba(148, 163, 184, 0.15);
+                border: 1px solid var(--panel-border);
                 border-radius: var(--radius);
                 box-shadow: var(--shadow);
                 overflow: hidden;
             }
+
+            [data-theme="light"] .panel {
+                background: linear-gradient(
+                    180deg,
+                    rgba(255, 255, 255, 0.95),
+                    rgba(255, 255, 255, 0.85)
+                );
+            }
+
             .panel header {
                 position: static;
                 background: transparent;
                 backdrop-filter: none;
                 border: none;
                 padding: 14px 16px;
-                border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+                border-bottom: 1px solid var(--panel-border);
             }
             .panel h2 {
                 font-size: 14px;
@@ -216,6 +289,11 @@
                 color: #cbd5e1;
                 letter-spacing: 0.3px;
             }
+
+            [data-theme="light"] .panel h2 {
+                color: #475569;
+            }
+
             .panel .body {
                 padding: 14px;
             }
@@ -223,9 +301,9 @@
                 width: 100%;
                 min-height: 420px;
                 resize: vertical;
-                background: #0b1220;
+                background: var(--editor-bg);
                 color: var(--text);
-                border: 1px solid rgba(148, 163, 184, 0.18);
+                border: 1px solid var(--input-border);
                 border-radius: 14px;
                 padding: 14px 14px 40px 14px;
                 line-height: 1.45;
@@ -254,8 +332,8 @@
             .chip {
                 padding: 6px 10px;
                 border-radius: 999px;
-                border: 1px dashed rgba(148, 163, 184, 0.25);
-                color: #93c5fd;
+                border: 1px dashed var(--chip-border);
+                color: var(--chip-color);
                 cursor: pointer;
                 user-select: none;
             }
@@ -266,8 +344,8 @@
             .preview-wrap {
                 position: relative;
                 overflow: auto;
-                background: #0b1220;
-                border: 1px solid rgba(148, 163, 184, 0.18);
+                background: var(--preview-bg);
+                border: 1px solid var(--input-border);
                 border-radius: 14px;
                 padding: 10px;
                 min-height: 420px;
@@ -290,6 +368,10 @@
                 color: #fca5a5;
             }
 
+            [data-theme="light"] .status .err {
+                color: #dc2626;
+            }
+
             .footer-note {
                 text-align: center;
                 color: var(--muted);
@@ -298,24 +380,69 @@
             }
 
             .kbd {
-                border: 1px solid rgba(148, 163, 184, 0.3);
+                border: 1px solid var(--kbd-border);
                 padding: 2px 6px;
                 border-radius: 6px;
                 font-size: 11px;
-                color: #cbd5e1;
+                color: var(--kbd-color);
+            }
+
+            .theme-toggle {
+                background: var(--input-bg);
+                border: 1px solid var(--input-border);
+                border-radius: 20px;
+                width: 44px;
+                height: 24px;
+                position: relative;
+                cursor: pointer;
+                margin-left: auto;
+            }
+
+            .theme-toggle::before {
+                content: "";
+                position: absolute;
+                width: 18px;
+                height: 18px;
+                border-radius: 50%;
+                background: var(--accent);
+                top: 2px;
+                left: 3px;
+                transition: transform 0.3s ease;
+            }
+
+            [data-theme="light"] .theme-toggle::before {
+                transform: translateX(20px);
+            }
+
+            .theme-container {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                margin-left: auto;
+                font-size: 12px;
+                color: var(--muted);
             }
         </style>
     </head>
-    <body>
+    <body data-theme="dark">
         <header>
             <div class="wrap">
-                <div class="brand">
-                    <div class="logo" aria-hidden="true"></div>
-                    <div>
-                        <h1>Mermaide</h1>
-                        <div class="sub">
-                            Dark mode • Blue accent • Export high-quality PNG
+                <div style="display: flex; align-items: center">
+                    <div class="brand">
+                        <div class="logo" aria-hidden="true"></div>
+                        <div>
+                            <h1>Mermaide</h1>
+                            <div class="sub">
+                                Dark mode • Blue accent • Export high-quality
+                                PNG
+                            </div>
                         </div>
+                    </div>
+
+                    <div class="theme-container">
+                        <span>Dark</span>
+                        <div class="theme-toggle" id="themeToggle"></div>
+                        <span>Light</span>
                     </div>
                 </div>
 
@@ -344,11 +471,15 @@
                         <label for="scale">PNG Scale</label>
                         <select id="scale">
                             <option value="1">1×</option>
-                            <option value="2" selected>2×</option>
+                            <option value="2">2×</option>
                             <option value="3">3×</option>
                             <option value="4">4×</option>
                             <option value="5">5×</option>
                             <option value="6">6×</option>
+                            <option value="7">7×</option>
+                            <option value="8">8×</option>
+                            <option value="9">9×</option>
+                            <option value="10" selected>10×</option>
                         </select>
                         <button id="downloadPng" class="success">
                             Download PNG
@@ -414,7 +545,7 @@
 
             <p class="footer-note">
                 Tip: For very large diagrams, keep shapes/labels concise. If you
-                ever hit a “maximum text size” error, split the diagram into
+                ever hit a "maximum text size" error, split the diagram into
                 sub-graphs or remove unused whitespace/comments.
             </p>
         </main>
@@ -446,6 +577,32 @@
                 fontFamily: "Inter, ui-sans-serif, system-ui",
             });
 
+            // Light mode Mermaid config
+            const lightMermaidConfig = {
+                startOnLoad: false,
+                securityLevel: "loose",
+                theme: "default",
+                themeVariables: {
+                    background: "#ffffff",
+                    primaryColor: "#ffffff",
+                    primaryTextColor: "#1e293b",
+                    lineColor: "#3b82f6",
+                    edgeLabelBackground: "#f8fafc",
+                    clusterBkg: "#f1f5f9",
+                    clusterBorder: "#3b82f6",
+                    noteBkgColor: "#f1f5f9",
+                    noteTextColor: "#475569",
+                },
+                flowchart: {
+                    useMaxWidth: true,
+                    htmlLabels: true,
+                    curve: "linear",
+                },
+                sequence: { mirrorActors: false, showSequenceNumbers: false },
+                er: { useMaxWidth: true },
+                fontFamily: "Inter, ui-sans-serif, system-ui",
+            };
+
             // ---------- Elements ----------
             const editor = document.getElementById("editor");
             const preview = document.getElementById("preview");
@@ -457,9 +614,13 @@
             const downloadSvgBtn = document.getElementById("downloadSvg");
             const scaleSel = document.getElementById("scale");
             const chips = document.querySelectorAll(".chip");
+            const themeToggle = document.getElementById("themeToggle");
+            const body = document.body;
+            const subTitle = document.querySelector(".sub");
 
             let lastSVG = "";
             let lastTitle = "mermaid-chart";
+            let currentTheme = "dark";
 
             // ---------- Templates ----------
             const TEMPLATES = {
@@ -550,6 +711,52 @@
                     .replace(/^-+|-+$/g, "");
             }
 
+            // ---------- Theme Switching ----------
+            function toggleTheme() {
+                currentTheme = currentTheme === "dark" ? "light" : "dark";
+                body.setAttribute("data-theme", currentTheme);
+
+                // Update Mermaid config based on theme
+                if (currentTheme === "light") {
+                    mermaid.initialize(lightMermaidConfig);
+                    subTitle.textContent =
+                        "Light mode • Blue accent • Export high-quality PNG";
+                } else {
+                    mermaid.initialize({
+                        startOnLoad: false,
+                        securityLevel: "loose",
+                        theme: "dark",
+                        themeVariables: {
+                            background: "#0b1220",
+                            primaryColor: "#0b1220",
+                            primaryTextColor: "#e5e7eb",
+                            lineColor: "#60a5fa",
+                            edgeLabelBackground: "#0b1220",
+                            clusterBkg: "#0f172a",
+                            clusterBorder: "#2563eb",
+                            noteBkgColor: "#0f172a",
+                            noteTextColor: "#cbd5e1",
+                        },
+                        flowchart: {
+                            useMaxWidth: true,
+                            htmlLabels: true,
+                            curve: "linear",
+                        },
+                        sequence: {
+                            mirrorActors: false,
+                            showSequenceNumbers: false,
+                        },
+                        er: { useMaxWidth: true },
+                        fontFamily: "Inter, ui-sans-serif, system-ui",
+                    });
+                    subTitle.textContent =
+                        "Dark mode • Blue accent • Export high-quality PNG";
+                }
+
+                // Re-render the diagram with the new theme
+                renderMermaid(editor.value);
+            }
+
             // ---------- Rendering ----------
             async function renderMermaid(code) {
                 if (!code || !code.trim()) {
@@ -621,7 +828,7 @@
             // ✅ FIX: use data: URL + crossOrigin=anonymous to avoid tainted canvas
             function svgToPng(
                 svgText,
-                scale = 2,
+                scale = 10,
                 filename = "chart.png",
                 bg = "#0b1220"
             ) {
@@ -637,8 +844,9 @@
                     canvas.width = Math.max(1, Math.round(width * scale));
                     canvas.height = Math.max(1, Math.round(height * scale));
                     const ctx = canvas.getContext("2d");
-                    // Solid dark background for non-transparent PNGs
-                    ctx.fillStyle = bg;
+                    // Solid background for non-transparent PNGs
+                    ctx.fillStyle =
+                        currentTheme === "dark" ? "#0b1220" : "#ffffff";
                     ctx.fillRect(0, 0, canvas.width, canvas.height);
                     ctx.imageSmoothingEnabled = true;
                     ctx.imageSmoothingQuality = "high";
@@ -709,12 +917,12 @@
                     alert("Nothing to export yet. Type some Mermaid code.");
                     return;
                 }
-                const scale = parseInt(scaleSel.value, 10) || 2;
+                const scale = parseInt(scaleSel.value, 10) || 10;
                 svgToPng(
                     lastSVG,
                     scale,
                     `${lastTitle || "mermaid-chart"}@${scale}x.png`,
-                    "#0b1220"
+                    currentTheme === "dark" ? "#0b1220" : "#ffffff"
                 );
             });
 
@@ -725,6 +933,8 @@
                 }
                 downloadSVG(lastSVG, `${lastTitle || "mermaid-chart"}.svg`);
             });
+
+            themeToggle.addEventListener("click", toggleTheme);
 
             function insertAtCursor(textarea, text) {
                 const start = textarea.selectionStart;
